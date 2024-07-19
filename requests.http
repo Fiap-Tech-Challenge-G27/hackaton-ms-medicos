@@ -1,0 +1,47 @@
+@baseUrl = http://localhost
+##Alterar a porta de acordo com a exposição do serviço pelo Kubernetes
+@port = 3333
+@host = {{baseUrl}}:{{port}}
+
+
+### Post new category
+# @name test
+GET {{host}}/
+
+
+### Post new doctor
+# @name newDoctor
+POST {{host}}/doctors
+Content-Type: application/json
+
+{
+  "name": "string",
+  "phone": "string",
+  "email": "string",
+  "crm": "string",
+  "password": "string",
+  "specialties": ["string"],
+  "address": {
+    "street": "string",
+    "number": 1,
+    "city": "string",
+    "state": "string",
+    "zip": "string"
+  }
+}
+
+### Auth
+# @name auth
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "string",
+  "password": "string"
+}
+
+# Implements get passing access_token in header Authorization Bearer
+### Get all doctors
+# @name getAllDoctors
+GET {{host}}/auth/profile
+Authorization: Bearer {{auth.response.body.access_token}}
