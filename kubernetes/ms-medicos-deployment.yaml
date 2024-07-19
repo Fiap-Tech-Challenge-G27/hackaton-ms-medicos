@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ms-cliente
+  name: ms-medicos
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ms-cliente
+      app: ms-medicos
   template:
     metadata:
       labels:
-        app: ms-cliente
+        app: ms-medicos
     spec:
       serviceAccountName: irsasecrets
       containers:
-        - name: ms-cliente
-          image: 851725345801.dkr.ecr.us-east-1.amazonaws.com/ms-cliente:{{VERSION}}
+        - name: ms-medicos
+          image: 851725345801.dkr.ecr.us-east-1.amazonaws.com/ms-medicos:{{VERSION}}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -45,17 +45,17 @@ spec:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: "aws-secrets-ms-cliente"  # Nome do seu SecretProviderClass
+              secretProviderClass: "aws-secrets-ms-medicos"  # Nome do seu SecretProviderClass
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: ms-cliente
+  name: ms-medicos
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: ms-cliente
+    name: ms-medicos
   minReplicas: 1
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
