@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-cliente
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-cliente
+  template:
+    metadata:
+      labels:
+        app: ms-cliente
+    spec:
+      serviceAccountName: irsasecrets
+      containers:
+        - name: ms-cliente
+          image: 851725345801.dkr.ecr.us-east-1.amazonaws.com/ms-cliente:{{VERSION}}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "0.25"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          env:
+            - name: MONGO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: documentdb-secret
+                  key: urlCustomers
+          volumeMounts:
+            - name: secrets-store-inline
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "aws-secrets-ms-cliente"  # Nome do seu SecretProviderClass
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ms-cliente
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ms-cliente
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80

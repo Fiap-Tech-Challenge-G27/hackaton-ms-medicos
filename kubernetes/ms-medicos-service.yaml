@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-medicos
+spec:
+  selector:
+    app: ms-medicos
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+    nodePort: 30002
