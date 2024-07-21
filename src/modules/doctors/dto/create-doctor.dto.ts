@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, MinLength } from 'class-validator';
 
 export class AddressDto {
   @ApiProperty()
@@ -19,7 +20,11 @@ export class CreateDoctorDto {
   @ApiProperty()
   phone: string;
   @ApiProperty()
+  @IsEmail()
   email: string;
+  @ApiProperty()
+  @MinLength(8)
+  password: string;
   @ApiProperty()
   crm: string;
   @ApiProperty()

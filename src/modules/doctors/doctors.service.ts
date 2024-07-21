@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { hash } from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
@@ -11,10 +12,28 @@ export class DoctorsService {
   constructor(
     @InjectModel(Doctor.name) private doctorModel: Model<DoctorDocument>,
   ) {}
-  create(createDoctorDto: CreateDoctorDto) {
-    const createdDoctor = new this.doctorModel(createDoctorDto);
+  async create(createDoctorDto: CreateDoctorDto) {
+    const passwordEncrypted = await hash(createDoctorDto.password, 10);
 
-    return createdDoctor.save();
+    console.log(passwordEncrypted);
+
+    const createdDoctor = new this.doctorModel({
+      name: createDoctorDto.name,
+      email: createDoctorDto.email,
+      crm: createDoctorDto.crm,
+      specialties: createDoctorDto.specialties,
+      phone: createDoctorDto.phone,
+      password: passwordEncrypted,
+      address: {
+        street: createDoctorDto.address.street,
+        number: createDoctorDto.address.number,
+        city: createDoctorDto.address.city,
+        state: createDoctorDto.address.state,
+        zip: createDoctorDto.address.zip,
+      },
+    });
+
+    return await createdDoctor.save();
   }
 
   findAll() {
@@ -34,20 +53,20 @@ export class DoctorsService {
       throw new NotFoundException('Doctor not found');
     }
 
-    const doctorEntity = new DoctorEntity(
-      doctor.name,
-      doctor.email,
-      doctor.crm,
-      doctor.specialties,
-      doctor.phone,
-      new AddressEntity(
-        doctor.address.street,
-        doctor.address.number,
-        doctor.address.city,
-        doctor.address.state,
-        doctor.address.zip,
-      ),
-    );
+    const doctorEntity = new DoctorEntity({
+      name: doctor.name,
+      email: doctor.email,
+      crm: doctor.crm,
+      specialties: doctor.specialties,
+      phone: doctor.phone,
+      address: new AddressEntity({
+        street: doctor.address.street,
+        number: doctor.address.number,
+        city: doctor.address.city,
+        state: doctor.address.state,
+        zip: doctor.address.zip,
+      }),
+    });
 
     doctorEntity.id = doctor._id.toString();
     doctorEntity.password = doctor.password;
