@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -14,8 +18,8 @@ export class AppointmentsService {
     @InjectModel(Doctor.name)
     private doctorModel: Model<DoctorDocument>,
   ) {}
-  create(doctorId: string, createAppointmentDto: CreateAppointmentDto) {
-    const doctor = this.doctorModel.findById(doctorId);
+  async create(doctorId: string, createAppointmentDto: CreateAppointmentDto) {
+    const doctor = await this.doctorModel.findById(doctorId);
 
     if (!doctor) {
       throw new NotFoundException('Doctor not found');
@@ -26,22 +30,48 @@ export class AppointmentsService {
       doctor: doctorId,
     });
 
-    return createdAppointment.save();
+    return await createdAppointment.save();
   }
 
-  findAll() {
-    return `This action returns all appointments`;
+  async findAllByDoctorId(id: string) {
+    const appointments = await this.appointmentModel.find({ doctor: id });
+
+    return appointments;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} appointment`;
+  async findAllByPatientId(id: string) {
+    const appointments = await this.appointmentModel.find({ patientId: id });
+
+    return appointments;
   }
 
-  update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
-    return `This action updates a #${id} appointment`;
+  async update(id: string, updateAppointmentDto: UpdateAppointmentDto) {
+    const appointment = await this.appointmentModel.findOneAndUpdate(
+      { _id: id },
+      updateAppointmentDto,
+      { new: false },
+    );
+
+    if (!appointment) {
+      throw new NotFoundException('Appointment not found');
+    }
+
+    return await appointment.save();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} appointment`;
+  async remove(id: string) {
+    const appointmentExists = await this.appointmentModel.findOne({ _id: id });
+
+    if (!appointmentExists) {
+      throw new NotFoundException('Appointment not found');
+    }
+
+    if (appointmentExists.status === 'accepted') {
+      throw new BadRequestException(
+        'You cannot delete an accepted appointment',
+      );
+    }
+
+    return await appointmentExists.deleteOne();
   }
 }

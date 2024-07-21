@@ -4,12 +4,12 @@
 @host = {{baseUrl}}:{{port}}
 
 
-### Post new category
+###
 # @name test
 GET {{host}}/
 
 
-### Post new doctor
+###
 # @name newDoctor
 POST {{host}}/doctors
 Content-Type: application/json
@@ -17,9 +17,9 @@ Content-Type: application/json
 {
   "name": "string",
   "phone": "string",
-  "email": "string",
-  "crm": "string",
-  "password": "string",
+  "email": "test{{$randomInt 10000 90000}}@gmail.com",
+  "crm": "{{$randomInt 10000 90000}}",
+  "password": "12345678",
   "specialties": ["string"],
   "address": {
     "street": "string",
@@ -30,18 +30,58 @@ Content-Type: application/json
   }
 }
 
-### Auth
+###
 # @name auth
 POST {{host}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "string",
-  "password": "string"
+  "username": "test37642@gmail.com",
+  "password": "12345678"
 }
 
 # Implements get passing access_token in header Authorization Bearer
-### Get all doctors
-# @name getAllDoctors
+###
+# @name getProfileDoctor
 GET {{host}}/auth/profile
 Authorization: Bearer {{auth.response.body.access_token}}
+
+###
+# @name getDoctors
+GET {{host}}/doctors
+
+###
+# @name getAppointmentsOfDoctorAuthenticated
+GET {{host}}/appointments/doctor
+Authorization: Bearer {{auth.response.body.access_token}}
+
+###
+# @name newAppointment
+POST {{host}}/appointments
+Content-Type: application/json
+Authorization: Bearer {{auth.response.body.access_token}}
+
+{
+  "type" : "remote",
+  "status" : "available",
+  "startTime" : "{{$localDatetime iso8601}}",
+  "endTime" : "{{$localDatetime iso8601}}"
+}
+
+###
+# @name getMyAppointmentsPatient
+GET {{host}}/appointments/patient/1234
+Content-Type: application/json
+
+###
+# @name updateAppointment
+PATCH {{host}}/appointments/669d3cc90b415d2c7a8ef0ab
+Content-Type: application/json
+
+{
+  "status" : "accepted"
+}
+
+###
+# @name deleteAppointment
+DELETE {{host}}/appointments/669d3d690b415d2c7a8ef0c5

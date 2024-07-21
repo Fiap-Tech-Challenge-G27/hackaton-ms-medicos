@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, MinLength } from 'class-validator';
+import { ArrayMinSize, IsArray, IsEmail, MinLength } from 'class-validator';
 
 export class AddressDto {
   @ApiProperty()
@@ -28,6 +28,8 @@ export class CreateDoctorDto {
   @ApiProperty()
   crm: string;
   @ApiProperty()
+  @IsArray()
+  @ArrayMinSize(1, { message: 'At least one specialty is required' })
   specialties: string;
   @ApiProperty()
   address: AddressDto;

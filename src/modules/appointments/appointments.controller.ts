@@ -25,14 +25,17 @@ export class AppointmentsController {
     return this.appointmentsService.create(id, createAppointmentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.appointmentsService.findAll();
+  @Get('doctor')
+  @UseGuards(JwtAuthGuard)
+  findAll(@Request() req) {
+    const { id } = req.user.data;
+
+    return this.appointmentsService.findAllByDoctorId(id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.appointmentsService.findOne(+id);
+  @Get('patient/:id')
+  findByPatientId(@Param('id') id: string) {
+    return this.appointmentsService.findAllByPatientId(id);
   }
 
   @Patch(':id')
@@ -40,11 +43,11 @@ export class AppointmentsController {
     @Param('id') id: string,
     @Body() updateAppointmentDto: UpdateAppointmentDto,
   ) {
-    return this.appointmentsService.update(+id, updateAppointmentDto);
+    return this.appointmentsService.update(id, updateAppointmentDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.appointmentsService.remove(+id);
+    return this.appointmentsService.remove(id);
   }
 }

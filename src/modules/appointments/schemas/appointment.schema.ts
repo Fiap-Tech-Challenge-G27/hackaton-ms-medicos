@@ -2,7 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as SchemaT } from 'mongoose';
 import { Doctor } from 'src/modules/doctors/schemas/doctor.schema';
 
-export type AppointmentDocument = HydratedDocument<Doctor>;
+export type AppointmentDocument = HydratedDocument<Appointment>;
 
 @Schema({ timestamps: true })
 export class Appointment {
@@ -16,6 +16,8 @@ export class Appointment {
   endTime: Date;
   @Prop({ required: true, type: SchemaT.Types.ObjectId, ref: Doctor.name })
   doctor: Doctor;
+  @Prop()
+  patientId: string;
 }
 
 export const AppointmentSchema = SchemaFactory.createForClass(Appointment);
