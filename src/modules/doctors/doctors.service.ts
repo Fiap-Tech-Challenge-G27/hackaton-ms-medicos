@@ -37,11 +37,9 @@ export class DoctorsService {
   }
 
   findAll() {
-    return `This action returns all doctors`;
-  }
+    const doctors = this.doctorModel.find();
 
-  findOne(id: number) {
-    return `This action returns a #${id} doctor`;
+    return doctors;
   }
 
   async findByParam(param: string): Promise<DoctorEntity> {
