@@ -34,7 +34,7 @@ spec:
             - name: MONGODB_ENDPOINT
               valueFrom:
                 secretKeyRef:
-                  name: documentdb-secret
+                  name: documentdb-secret-medicos
                   key: urlMedicos
           volumeMounts:
             - name: secrets-store-inline
