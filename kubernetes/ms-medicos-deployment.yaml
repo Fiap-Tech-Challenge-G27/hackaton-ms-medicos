@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ms-medicos
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -30,11 +31,11 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
           env:
-            - name: MONGO_URL
+            - name: MONGODB_ENDPOINT
               valueFrom:
                 secretKeyRef:
                   name: documentdb-secret
-                  key: urlCustomers
+                  key: urlMedicos
           volumeMounts:
             - name: secrets-store-inline
               mountPath: "/mnt/secrets-store"
