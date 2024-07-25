@@ -31,6 +31,12 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
           env:
+            - name: SALT
+              value: "$2b$10$.jS4AjYZXw05CPlBpB7Vtu"
+            - name: JWT_SECRET
+              value: "secret1234"
+            - name: JWT_EXPIRATION_TIME
+              value: "72d"
             - name: MONGODB_ENDPOINT
               valueFrom:
                 secretKeyRef:
