@@ -31,7 +31,7 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
           env:
-            - name: MONGO_ENDPOINT
+            - name: MONGODB_ENDPOINT
               valueFrom:
                 secretKeyRef:
                   name: documentdb-secret
