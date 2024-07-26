@@ -19,7 +19,7 @@ spec:
           image: 851725345801.dkr.ecr.us-east-1.amazonaws.com/ms-medicos:{{VERSION}}
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 3000
+            - containerPort: 3333
           resources:
             limits:
               memory: "512Mi"
