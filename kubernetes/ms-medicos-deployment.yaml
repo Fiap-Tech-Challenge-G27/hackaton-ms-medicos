@@ -22,12 +22,12 @@ spec:
             - containerPort: 3333
           resources:
             limits:
-              memory: "512Mi"
+              memory: "768Mi"
               cpu: "0.5"
           livenessProbe:
             httpGet:
               path: /health
-              port: 3000
+              port: 3333
             initialDelaySeconds: 120
             periodSeconds: 10
           env:
